@@ -15,11 +15,15 @@ export function Header() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
+  const openMobileSidebar = useUiStore((state) => state.openMobileSidebar);
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
       <div className="flex h-16 items-center gap-3 px-4 lg:px-6">
-        <Button variant="ghost" className="h-10 w-10 px-0" onClick={toggleSidebar} aria-label="Toggle sidebar">
+        <Button variant="ghost" className="h-10 w-10 px-0 lg:hidden" onClick={openMobileSidebar} aria-label="Open navigation menu">
+          <Menu className="h-5 w-5" />
+        </Button>
+        <Button variant="ghost" className="hidden h-10 w-10 px-0 lg:inline-flex" onClick={toggleSidebar} aria-label="Toggle sidebar">
           <Menu className="h-5 w-5" />
         </Button>
         <div className="relative hidden flex-1 md:block">
