@@ -1,9 +1,10 @@
 import { CameraStatusChart, RecordingStatsChart, StorageUsageChart } from "@/components/charts/vms-charts";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cameras } from "@/mock-data/vms";
+import { vmsService } from "@/services/vms-service";
 
 export default function AnalyticsPage() {
+  const cameras = vmsService.getCameras();
   return (
     <>
       <PageHeader title="Analytics" description="Mock charts for uptime, storage growth, recording volume, user activity, and top cameras." />

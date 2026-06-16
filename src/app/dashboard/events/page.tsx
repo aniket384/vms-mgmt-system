@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { PageHeader } from "@/components/common/page-header";
 import { DataTable } from "@/components/tables/data-table";
 import { Badge } from "@/components/ui/badge";
-import { events } from "@/mock-data/vms";
+import { vmsService } from "@/services/vms-service";
 import type { EventItem } from "@/types";
 
 const columns: ColumnDef<EventItem>[] = [
@@ -17,10 +17,11 @@ const columns: ColumnDef<EventItem>[] = [
 ];
 
 export default function EventsPage() {
+  const events = vmsService.getEvents();
   return (
     <>
       <PageHeader title="Events" description="Motion, offline, storage, login, and tamper events with severity badges and table controls." />
-      <DataTable data={events} columns={columns} searchPlaceholder="Search events..." />
+      <DataTable data={events} columns={columns} searchPlaceholder="Search events..." exportFilename="events.csv" />
     </>
   );
 }

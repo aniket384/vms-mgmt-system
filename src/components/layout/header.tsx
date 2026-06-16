@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bell, LogOut, Menu, Moon, Search, Sun, UserCircle } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { notifications } from "@/mock-data/vms";
@@ -21,10 +21,41 @@ export function Header() {
   const [mounted, setMounted] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   // next-themes resolves the current theme only after hydration.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    function closeMenus(event: MouseEvent) {
+      const target = event.target as Node;
+      if (
+        notificationsRef.current?.contains(target) ||
+        profileRef.current?.contains(target)
+      ) {
+        return;
+      }
+      setNotificationsOpen(false);
+      setProfileOpen(false);
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setNotificationsOpen(false);
+        setProfileOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", closeMenus);
+    document.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", closeMenus);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
 
   const isDark = mounted ? resolvedTheme === "dark" : true;
 
@@ -52,12 +83,14 @@ export function Header() {
         >
           {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>
-        <div className="relative">
+        <div className="relative" ref={notificationsRef}>
           <Button
             variant="ghost"
             className="h-10 w-10 px-0"
             aria-label="Notifications"
             aria-expanded={notificationsOpen}
+            aria-haspopup="menu"
+            aria-controls="header-notifications-menu"
             onClick={() => {
               setNotificationsOpen((value) => !value);
               setProfileOpen(false);
@@ -66,6 +99,8 @@ export function Header() {
             <Bell className="h-5 w-5" />
           </Button>
           <div
+            id="header-notifications-menu"
+            role="menu"
             className={cn(
               "absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-3 shadow-lg transition dark:border-slate-800 dark:bg-slate-950",
               notificationsOpen ? "visible z-50 opacity-100" : "invisible opacity-0",
@@ -74,19 +109,21 @@ export function Header() {
             <p className="mb-2 text-sm font-semibold">Notifications</p>
             <div className="space-y-2">
               {notifications.map((item) => (
-                <div key={item} className="rounded-md bg-slate-100 p-3 text-sm dark:bg-slate-900">
+                <div key={item} role="menuitem" className="rounded-md bg-slate-100 p-3 text-sm dark:bg-slate-900">
                   {item}
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative" ref={profileRef}>
           <Button
             variant="secondary"
             className="h-10"
             aria-label="User menu"
             aria-expanded={profileOpen}
+            aria-haspopup="menu"
+            aria-controls="header-profile-menu"
             onClick={() => {
               setProfileOpen((value) => !value);
               setNotificationsOpen(false);
@@ -96,15 +133,18 @@ export function Header() {
             <span className="hidden sm:inline">{user?.name ?? "Demo User"}</span>
           </Button>
           <div
+            id="header-profile-menu"
+            role="menu"
             className={cn(
               "absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white p-2 shadow-lg transition dark:border-slate-800 dark:bg-slate-950",
               profileOpen ? "visible z-50 opacity-100" : "invisible opacity-0",
             )}
           >
-            <Link className="block rounded-md px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-900" href="/dashboard/profile" onClick={() => setProfileOpen(false)}>
+            <Link role="menuitem" className="block rounded-md px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-900" href="/dashboard/profile" onClick={() => setProfileOpen(false)}>
               Profile
             </Link>
             <button
+              role="menuitem"
               className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-500/10"
               onClick={() => {
                 logout();

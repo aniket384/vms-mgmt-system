@@ -1,9 +1,10 @@
 import { Bell } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { Card, CardContent } from "@/components/ui/card";
-import { notifications } from "@/mock-data/vms";
+import { vmsService } from "@/services/vms-service";
 
 export default function NotificationsPage() {
+  const notifications = vmsService.getNotifications();
   return (
     <>
       <PageHeader title="Notifications" description="Operator notification center for system alerts and workflow reminders." />

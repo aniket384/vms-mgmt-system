@@ -3,7 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { PageHeader } from "@/components/common/page-header";
 import { DataTable } from "@/components/tables/data-table";
-import { auditLogs } from "@/mock-data/vms";
+import { vmsService } from "@/services/vms-service";
 import type { AuditLog } from "@/types";
 
 const columns: ColumnDef<AuditLog>[] = [
@@ -15,10 +15,11 @@ const columns: ColumnDef<AuditLog>[] = [
 ];
 
 export default function AuditLogsPage() {
+  const auditLogs = vmsService.getAuditLogs();
   return (
     <>
       <PageHeader title="Audit Logs" description="Searchable mock audit trail for user activity, system actions, modules, timestamps, and IP addresses." />
-      <DataTable data={auditLogs} columns={columns} searchPlaceholder="Search audit logs..." />
+      <DataTable data={auditLogs} columns={columns} searchPlaceholder="Search audit logs..." exportFilename="audit-logs.csv" />
     </>
   );
 }

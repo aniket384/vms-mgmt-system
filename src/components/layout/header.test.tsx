@@ -57,6 +57,30 @@ describe("Header", () => {
     expect(screen.getByText("Warehouse Aisle 4 is offline")).toBeInTheDocument();
   });
 
+  it("closes open menus with Escape and outside click", async () => {
+    const user = userEvent.setup();
+    render(
+      <div>
+        <Header />
+        <main>Outside content</main>
+      </div>,
+    );
+
+    const notifications = screen.getByLabelText("Notifications");
+    await user.click(notifications);
+    expect(notifications).toHaveAttribute("aria-expanded", "true");
+
+    await user.keyboard("{Escape}");
+    expect(notifications).toHaveAttribute("aria-expanded", "false");
+
+    const userMenu = screen.getByLabelText("User menu");
+    await user.click(userMenu);
+    expect(userMenu).toHaveAttribute("aria-expanded", "true");
+
+    await user.click(screen.getByText("Outside content"));
+    expect(userMenu).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("opens user menu and routes to login on sign out", async () => {
     const user = userEvent.setup();
     render(<Header />);

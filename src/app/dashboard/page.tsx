@@ -4,9 +4,12 @@ import { PageHeader } from "@/components/common/page-header";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cameras, events, users } from "@/mock-data/vms";
+import { vmsService } from "@/services/vms-service";
 
 export default function DashboardPage() {
+  const cameras = vmsService.getCameras();
+  const events = vmsService.getEvents();
+  const users = vmsService.getUsers();
   const online = cameras.filter((camera) => camera.status === "online").length;
   return (
     <>
