@@ -1,4 +1,4 @@
-import type { AuditLog, Camera, ChartPoint, EventItem, Recording, VmsUser } from "@/types";
+import type { AiInsight, AuditLog, Camera, ChartPoint, EventItem, Recording, SiteHealth, VmsUser } from "@/types";
 
 export const cameras: Camera[] = [
   { id: "CAM-001", name: "Main Gate ANPR", location: "North Entrance", ipAddress: "10.10.1.21", status: "online", resolution: "4K", storage: "2.4 TB", uptime: 99.8, recording: true },
@@ -79,4 +79,17 @@ export const notifications = [
   "NVR Cluster 01 crossed 82% storage usage",
   "New shared video link expires in 48 hours",
   "Three motion events require acknowledgement",
+];
+
+export const siteHealth: SiteHealth[] = [
+  { id: "SITE-01", name: "Corporate HQ", city: "Bengaluru", cameras: 42, online: 40, risk: "medium", storageUsed: 72, responseSla: "02m 14s" },
+  { id: "SITE-02", name: "North Logistics Hub", city: "Delhi NCR", cameras: 64, online: 58, risk: "high", storageUsed: 86, responseSla: "04m 48s" },
+  { id: "SITE-03", name: "West Data Center", city: "Pune", cameras: 28, online: 28, risk: "low", storageUsed: 61, responseSla: "01m 22s" },
+  { id: "SITE-04", name: "Coastal Plant", city: "Chennai", cameras: 53, online: 50, risk: "medium", storageUsed: 79, responseSla: "03m 05s" },
+];
+
+export const aiInsights: AiInsight[] = [
+  { id: "AI-01", title: "Repeated motion after-hours", summary: "Loading Dock has 3 motion events outside the expected delivery window.", confidence: 91, severity: "high" },
+  { id: "AI-02", title: "Camera health degradation", summary: "Warehouse Aisle 4 shows recurring offline intervals over the last 24 hours.", confidence: 87, severity: "high" },
+  { id: "AI-03", title: "Storage retention pressure", summary: "NVR Cluster 01 may breach 90% capacity within 36 hours at current recording rate.", confidence: 82, severity: "medium" },
 ];

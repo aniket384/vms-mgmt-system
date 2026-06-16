@@ -8,6 +8,7 @@ const setTheme = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
+  usePathname: () => "/dashboard",
 }));
 
 vi.mock("next/link", () => ({
@@ -42,6 +43,20 @@ describe("Header", () => {
     await user.click(screen.getByLabelText("Toggle theme"));
 
     expect(setTheme).toHaveBeenCalledWith("light");
+  });
+
+  it("opens command palette from search and closes after selecting a route", async () => {
+    const user = userEvent.setup();
+    render(<Header />);
+
+    await user.click(screen.getByLabelText("Open command palette"));
+
+    expect(screen.getByRole("dialog", { name: "Command palette" })).toBeInTheDocument();
+
+    await user.type(screen.getByPlaceholderText("Jump to dashboard, live view, cameras..."), "live");
+    await user.click(screen.getByRole("link", { name: "Live View" }));
+
+    expect(screen.queryByRole("dialog", { name: "Command palette" })).not.toBeInTheDocument();
   });
 
   it("opens notifications from a click instead of relying on hover", async () => {

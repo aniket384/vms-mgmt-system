@@ -6,6 +6,7 @@ import { Bell, LogOut, Menu, Moon, Search, Sun, UserCircle } from "lucide-react"
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { CommandPalette } from "@/components/layout/command-palette";
 import { cn } from "@/lib/utils";
 import { notifications } from "@/mock-data/vms";
 import { useAuthStore } from "@/store/auth-store";
@@ -21,6 +22,7 @@ export function Header() {
   const [mounted, setMounted] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -68,13 +70,16 @@ export function Header() {
         <Button variant="ghost" className="hidden h-10 w-10 px-0 lg:inline-flex" onClick={toggleSidebar} aria-label="Toggle sidebar">
           <Menu className="h-5 w-5" />
         </Button>
-        <div className="relative hidden flex-1 md:block">
+        <button
+          type="button"
+          className="relative hidden h-10 flex-1 items-center rounded-md border border-slate-200 bg-slate-50 pl-10 pr-3 text-left text-sm text-slate-400 outline-none transition hover:border-cyan-500 dark:border-slate-800 dark:bg-slate-900 md:flex"
+          onClick={() => setCommandOpen(true)}
+          aria-label="Open command palette"
+        >
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            className="h-10 w-full max-w-xl rounded-md border border-slate-200 bg-slate-50 pl-10 pr-3 text-sm outline-none focus:border-cyan-500 dark:border-slate-800 dark:bg-slate-900"
-            placeholder="Search cameras, users, events, recordings..."
-          />
-        </div>
+          <span className="truncate">Search cameras, users, events, recordings...</span>
+          <span className="ml-auto rounded border border-slate-200 bg-white px-1.5 py-0.5 text-xs text-slate-500 dark:border-slate-700 dark:bg-slate-950">⌘K</span>
+        </button>
         <Button
           variant="ghost"
           className="h-10 w-10 px-0"
@@ -158,6 +163,7 @@ export function Header() {
           </div>
         </div>
       </div>
+      <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
     </header>
   );
 }

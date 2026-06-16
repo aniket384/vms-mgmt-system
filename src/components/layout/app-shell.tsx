@@ -1,4 +1,5 @@
 import { Header } from "@/components/layout/header";
+import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { Sidebar } from "@/components/layout/sidebar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -8,7 +9,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar />
         <div className="min-w-0 flex-1">
           <Header />
-          <main className="p-4 lg:p-6">{children}</main>
+          <main className="p-4 pb-24 lg:p-6">{children}</main>
+          <MobileBottomNav />
         </div>
       </div>
     </div>

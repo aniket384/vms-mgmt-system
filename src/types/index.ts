@@ -55,3 +55,22 @@ export type ChartPoint = {
   name: string;
   value: number;
 };
+
+export type SiteHealth = {
+  id: string;
+  name: string;
+  city: string;
+  cameras: number;
+  online: number;
+  risk: "low" | "medium" | "high" | "critical";
+  storageUsed: number;
+  responseSla: string;
+};
+
+export type AiInsight = {
+  id: string;
+  title: string;
+  summary: string;
+  confidence: number;
+  severity: "low" | "medium" | "high";
+};
