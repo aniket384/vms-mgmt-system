@@ -4,18 +4,29 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bell, LogOut, Menu, Moon, Search, Sun, UserCircle } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { notifications } from "@/mock-data/vms";
 import { useAuthStore } from "@/store/auth-store";
 import { useUiStore } from "@/store/ui-store";
 
 export function Header() {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const openMobileSidebar = useUiStore((state) => state.openMobileSidebar);
+  const [mounted, setMounted] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  // next-themes resolves the current theme only after hydration.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+
+  const isDark = mounted ? resolvedTheme === "dark" : true;
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
@@ -36,17 +47,30 @@ export function Header() {
         <Button
           variant="ghost"
           className="h-10 w-10 px-0"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={() => setTheme(isDark ? "light" : "dark")}
           aria-label="Toggle theme"
         >
-          <Sun className="hidden h-5 w-5 dark:block" />
-          <Moon className="h-5 w-5 dark:hidden" />
+          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </Button>
-        <div className="group relative">
-          <Button variant="ghost" className="h-10 w-10 px-0" aria-label="Notifications">
+        <div className="relative">
+          <Button
+            variant="ghost"
+            className="h-10 w-10 px-0"
+            aria-label="Notifications"
+            aria-expanded={notificationsOpen}
+            onClick={() => {
+              setNotificationsOpen((value) => !value);
+              setProfileOpen(false);
+            }}
+          >
             <Bell className="h-5 w-5" />
           </Button>
-          <div className="invisible absolute right-0 mt-2 w-80 rounded-lg border border-slate-200 bg-white p-3 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 dark:border-slate-800 dark:bg-slate-950">
+          <div
+            className={cn(
+              "absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-3 shadow-lg transition dark:border-slate-800 dark:bg-slate-950",
+              notificationsOpen ? "visible z-50 opacity-100" : "invisible opacity-0",
+            )}
+          >
             <p className="mb-2 text-sm font-semibold">Notifications</p>
             <div className="space-y-2">
               {notifications.map((item) => (
@@ -57,19 +81,34 @@ export function Header() {
             </div>
           </div>
         </div>
-        <div className="group relative">
-          <Button variant="secondary" className="h-10">
+        <div className="relative">
+          <Button
+            variant="secondary"
+            className="h-10"
+            aria-label="User menu"
+            aria-expanded={profileOpen}
+            onClick={() => {
+              setProfileOpen((value) => !value);
+              setNotificationsOpen(false);
+            }}
+          >
             <UserCircle className="h-4 w-4" />
             <span className="hidden sm:inline">{user?.name ?? "Demo User"}</span>
           </Button>
-          <div className="invisible absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white p-2 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100 dark:border-slate-800 dark:bg-slate-950">
-            <Link className="block rounded-md px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-900" href="/dashboard/profile">
+          <div
+            className={cn(
+              "absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-white p-2 shadow-lg transition dark:border-slate-800 dark:bg-slate-950",
+              profileOpen ? "visible z-50 opacity-100" : "invisible opacity-0",
+            )}
+          >
+            <Link className="block rounded-md px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-900" href="/dashboard/profile" onClick={() => setProfileOpen(false)}>
               Profile
             </Link>
             <button
               className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-500/10"
               onClick={() => {
                 logout();
+                setProfileOpen(false);
                 router.push("/login");
               }}
             >

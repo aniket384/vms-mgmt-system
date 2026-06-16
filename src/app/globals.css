@@ -23,6 +23,16 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+html,
+body {
+  min-height: 100%;
+  overscroll-behavior-y: none;
+}
+
+html {
+  background: var(--background);
+}
+
 button,
 a,
 input,
